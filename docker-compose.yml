@@ -1,0 +1,42 @@
+version: '3'
+services:
+  app:
+    build:
+      context: ./simple-project-template-frontend
+      dockerfile: Dockerfile.development
+    container_name: app
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./simple-project-template-frontend:/app
+    command: "tail -f /dev/null"
+    depends_on:
+      - db
+
+  backend:
+    build:
+      context: ./simple-project-template-backend
+      dockerfile: Dockerfile
+      target: development
+    tty: true
+    container_name: backend
+    ports:
+      - "3005:3005"
+      - "5555:5555"
+    volumes:
+      - ./simple-project-template-backend:/usr/src/app
+    depends_on:
+      - db
+    command: "tail -f /dev/null"
+
+  db:
+    image: postgres
+    container_name: "db"
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: test
+      TZ: "Asia/Tokyo"
+    ports:
+      - "5433:5432"
+
